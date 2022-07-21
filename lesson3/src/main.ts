@@ -1,23 +1,32 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import { setupCounter } from './counter'
+import Navigo from 'navigo'
+import '../style.css'
+import Detail from './pages/Detail/detail';
+import Game from './pages/game/game'
+import HomePage from './pages/home/home'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+interface Component {
+  render: (param: any) => any;
+  afterRender?: () => any 
+}
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const print = async (component: Component, params: any) => {
+  document.getElementById('root').innerHTML = await component.render(params)
+  if (component.afterRender) {
+    component.afterRender()
+  }
+}
+
+const router = new Navigo('/', {linksSelector: 'a'})
+router.on({
+  "/": function(params: any) {
+    print(HomePage, params)
+  },
+  "/pokemon/:id": function(params: any) {
+    print(Detail, params)
+  },
+  "/game": function(params: any) {
+    print(Game, params)
+  }
+})
+
+router.resolve()
