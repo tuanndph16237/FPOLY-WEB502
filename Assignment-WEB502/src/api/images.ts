@@ -6,5 +6,5 @@ const imageInstance = axios.create({
 
 export const upload = (base64Image: string) => {
     const url = "/upload"
-    return imageInstance.post(url, {data: base64Image})
+    return imageInstance.post(url, { data: base64Image })
 }

@@ -1,16 +1,22 @@
-import { upload } from "../../../api/images"
-import { createProduct } from "../../../api/product"
-import AdminHeader from "../../../components/Header/Admin"
-import Sidebar from "../../../components/Sidebar"
-import Product from "../../../model/product"
 
+import { createProduct } from "../../../api/product"
+import header from "../../../components/header"
+import menu from "../../../components/menu"
+import Product from "../../../model/product"
+import { upload } from "../../../api/images"
+import { getCategory } from "../../../api/category"
+import Category from "../../../model/category"
 const AddProductPage = {
     render: async () => {
+        const res = await getCategory()
+        const data: Category[] = res.data
+        console.log(data)
+        console.log(data.map((p) => (p._id)).join(""))
         return /*html*/`
-        ${AdminHeader.render()}
+        ${header.render()}
         <div class="flex mt-4 divide-x">
             <div class="w-[250px] flex-none">
-                ${Sidebar.render()}
+                ${menu.render()}
             </div>
             <div class="grow">
                 <h3>Thêm mới sản phẩm</h3>
@@ -30,14 +36,15 @@ const AddProductPage = {
                     <img id="preview-image" />
                     </div>
                     <label for="">Mô tả ngắn</label>
-                    <textarea class="w-full border"></textarea>
+                    <input id="shortDescription" class="w-full border">
                 </div>
                 <div class="col-span-2">
                     <div>Thông tin sản phẩm</div>
                     <div class="flex flex-col mt-4">
                     <label for="">Tên sản phẩm:</label>
-                    <input id="name" type="text" placeholder="Tên sản phẩm" class="w-full border rounded-sm h-10">
+                    <input id="name" type="text" placeholder="Tên sản phẩm" class="w-full border rounded-sm h-10"><span id="loi"></span>
                     </div>
+                    
                     <div class="grid grid-cols-2 gap-4 mt-4">
                     <div class="flex flex-col">
                         <label for="">Giá gốc:</label>
@@ -45,11 +52,22 @@ const AddProductPage = {
                     </div>
                     <div class="flex flex-col">
                         <label for="">Giá khuyến mãi:</label>
-                        <input type="text" placeholder="Giá khuyến mãi" class="w-full border rounded-sm h-10">
+                        <input id="saleOffPrice" type="text" placeholder="Giá khuyến mãi" class="w-full border rounded-sm h-10">
+                    </div>    
                     </div>
+                    <div class="">
+                    <label for="">danh mục hiện tại :${data.map((p) => (`  ${p.name} :(${p._id})</label>`)).join(" ,")}
+                    <input id="category"  type="text" placeholder="danh mục" value="" class="w-full border rounded-sm h-10">
+                        
                     </div>
+                    <div>
+                    <label for="">Mô tả dài</label>
+                    <textarea id="description" class="w-full border" style="
+                     height: 100px;"></textarea>
+                    </div>
+                
+                   <button class="border rounded-md" id="add-product-btn">Thêm mới sản phẩm</button>
                 </div>
-                <button class="border rounded-md" id="add-product-btn">Thêm mới sản phẩm</button>
                 </div>
             </div>
         </div>
@@ -59,38 +77,45 @@ const AddProductPage = {
         const addProductBtn = document.querySelector('#add-product-btn')
         const inputFile = document.querySelector('#input-file')
         const previewImage = document.querySelector('#preview-image')
+        const loi = document.querySelector("#loi")
 
         addProductBtn?.addEventListener('click', async (e) => {
             const name = document.querySelector('#name')?.value
             const originalPrice = document.querySelector('#originalPrice')?.value
+            const saleOffPrice = document.querySelector("#saleOffPrice")?.value
+            const category = document.querySelector("#category")?.value
+            const description = document.querySelector("#description")?.value
+            const shortDescription = document.querySelector("#shortDescription")?.value
+
             const imageUrl = previewImage?.src
-            const product = new Product(name, originalPrice, imageUrl)
-            try {
-                const data = await createProduct(product)
-                alert('Thêm mới thành công')
-                location.href = "/admin"
-            } catch(err) {
-                console.log(err)
+            const product = new Product(name, originalPrice, imageUrl, saleOffPrice, category, description, shortDescription)
+            if (name !== "" && originalPrice !== "" && description !== "" && category !== "" && saleOffPrice !== "") {
+                try {
+                    const data = await createProduct(product)
+                    alert('Thêm mới thành công')
+                    location.href = "/admin"
+                } catch (err) {
+                }
+            }
+            else {
+                alert("bạn chưa nhạp đầy đủ thông tin");
+
             }
         })
 
         inputFile?.addEventListener('change', async (e) => {
-            // console.log(e.target.files)
             const file = e.target.files[0]
             const reader = new FileReader()
             reader.readAsDataURL(file)
             reader.onloadend = async () => {
-                 try {
+                try {
                     const res = await upload(reader.result)
                     const data = res.data
                     previewImage.src = data.url
-                 } catch(err) {
+                } catch (err) {
                     console.log(err)
-                 }
+                }
             }
-
-
-            // console.log('xxxxx')
         })
 
     }
