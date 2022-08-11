@@ -22,7 +22,7 @@ const Signin = {
             </div>
             </form>
             <div class="grow p-[55px] bg-gray-50 flex justify-center items-center">
-                <img src="./public/image/logo.png" alt="">
+                <img src="../../../public/images/logo.png" alt="">
             </div>
             </div>
         </div>

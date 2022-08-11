@@ -3,7 +3,7 @@ const header = {
         return (
             /*html*/`
             <div class="flex bg-blue-300 justify-between">
-                <a href="/"><img class="w-[64px] p-2" src="./public/image/logo.png"/></a>
+                <a href="/"><img class="w-[64px] p-2" src="../../public/images/logo.png"/></a>
                 <div class="ml-auto flex items-center">
 
                 <div class="flex items-center justify-center">
