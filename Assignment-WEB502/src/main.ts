@@ -1,51 +1,36 @@
-import './style.css'
-import typescriptLogo from './typescript.svg';
-import Navigo from "navigo";
-import AdminPage from './pages/Admin/index';
-import AddProductPage from './pages/Admin/Product/add';
-import EditProductPage from "./pages/Admin/product/edit";
-import homePage from './pages/homePage/home';
-import detailPage from './pages/detailPage/detail';
-import Signup from './pages/auth/signup';
-import Signin from './pages/auth/signin';
-const router = new Navigo('/', { linksSelector: "a" });
 
-export type ComponentBase = {
-  render: () => Promise<string>;
-  afterRender?: () => void
+import './style.css';
+import Navigo from 'navigo';
+import Home from './pages/home';
+import signUp from './pages/signup';
+import homeadmin from './pages/admin/home';
+import addProduct from './pages/admin/add';
+import updateProduct from './pages/admin/update';
+import productDetail from './pages/detail';
+import signIn from './pages/signin';
+import cartProduct from './cartProduct';
+const router = new Navigo('/',{hash:true});
+const app = document.querySelector<HTMLDivElement>('#app')!;
+type ComponentBase = {
+  render: (id:any) => Promise<string>;
+  afterRender?: (id:any) => void
 }
-const print = async (component: ComponentBase, id: any) => {
-  console.log(id)
-  document.getElementById('app').innerHTML = await component.render(id)
-  if (component.afterRender) {
-    component.afterRender(id)
+const print = async(component:ComponentBase,params?: any)=>{
+  app.innerHTML = await component.render(params);
+  if(component.afterRender) {
+    await component.afterRender(params)
   }
 }
 
 router.on({
-  "/": () => {
-    print(homePage)
-  },
-  "/products/:id": (value) => {
-    console.log(value.data.id);
-    print(detailPage, value.data.id);
-  },
-  "/admin": () => {
-    print(AdminPage)
-  },
-  "/admin/products/add": () => {
-    print(AddProductPage)
-  },
-  "/admin/products/edit/:id": (a) => {
-    const id = a.data.id
-    console.log(id)
-    print(EditProductPage, id)
-  },
-  "/singup": () => {
-    print(Signup)
-  },
-  "/singin": () => {
-    print(Signin)
-  }
+  '/':()=>print(Home,""),
+  '/product/:id':(param:any)=>{const id = +param.data.id;print(productDetail,id);},
+  '/admin':()=>print(homeadmin,""),
+  '/admin/add':()=>print(addProduct,""),
+  '/cartProduct':()=>print(cartProduct,''),
+  '/admin/update/:id':(param:any)=>{const id = +param.data.id;print(updateProduct,id);},
+  '/signup':()=>print(signUp,''),
+  '/signin':()=>print(signIn,''),
+  
 })
-router.resolve()
+router.resolve();

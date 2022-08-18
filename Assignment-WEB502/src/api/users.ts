@@ -1,9 +1,8 @@
-import instance from "./instance";
-import User from "../model/user";
-export const singup = (user: User) => {
-    const url = `/users`
-    return instance.post(url, user)
-};
-export const signin = (user: User) => {
-    return instance.post(`/login`, user);
-};
+import instance from "./config";
+
+export const signin = (data:any) => {
+    return instance.post(`/signin/`,data);
+} //dang nhap
+export const signup = (data:any) => {
+    return instance.post(`/signup/`,data);
+} //dang ky

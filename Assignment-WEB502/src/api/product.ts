@@ -1,22 +1,19 @@
-import instance from "./instance";
-import Product from "../model/product";
-export const getProducts = () => {
-    const url = "/products"
-    return instance.get(url)
+import instance from "./config"
+export const apiGet = (config:String) =>{
+    return instance.get(`${config}`);
 }
-export const createProduct = (product: Product) => {
-    const url = "/products"
-    return instance.post(url, product)
+export const getAll = () => {
+    return instance.get('/products');
 }
-export const remove = (id) => {
+export const getOne = (id:String) => {
+    return instance.get(`/products/${id}`);
+}
+export const add = (data:any) => {
+    return instance.post(`/products/`,data);
+}
+export const update = (id:String,data:any) => {
+    return instance.put(`/products/${id}`,data);
+}
+export const remove = (id:String) => {
     return instance.delete(`/products/${id}`);
-};
-export const update = (product: Product) => {
-    console.log(product)
-    const url = `/products/${product.id}`
-    return instance.put(url, product)
-}
-export const getProductsid = (id) => {
-    const url = `/products/${id}`
-    return instance.get(url)
 }
